@@ -46,7 +46,7 @@ Please enter the number of options of the attack spaced:0 1 3
 
 And hit enter, the process will start and make the choiced methods on the images of the Input Folder, just set parameters for each method choiced.
 
-Any questions you can ask me that I'm here to help you. :)
+Any questions you can ask me.
 
 Thank you!
 -Dixith Pinjari.
