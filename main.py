@@ -125,7 +125,7 @@ def blurBilateral(image, diameter=9, sigmaColor=75, sigmaSpace=75):
     return blurred
 
 def selectOption(option):
-    if option < 0 or option > 22:
+    if option < 0 or option > 24:
         print("Invalid option. Moving on to the next.")
     elif option == 20:
         for actualOption in range(6,9):
