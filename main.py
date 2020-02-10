@@ -124,27 +124,95 @@ def blurBilateral(image, diameter=9, sigmaColor=75, sigmaSpace=75):
     blurred = cv2.bilateralFilter(image,diameter, sigmaColor, sigmaSpace)
     return blurred
 
+def grayscale(image):
+    grayed = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return grayed
+
+def shuffleChannels(image):
+    blue = image[:,:,0].copy()
+    green = image[:,:,1].copy()
+    red = image[:,:,2].copy()
+    colors = [blue, green, red]
+    np.random.shuffle(colors)
+    shuffled = image.copy()
+    shuffled[:,:,0] = colors[0]
+    shuffled[:,:,1] = colors[1]
+    shuffled[:,:,2] = colors[2]
+    return shuffled
+
+def rgbShift(image):
+    blue = np.random.randint(low=-100, high=100)     
+    green = np.random.randint(low=-100, high=100)   
+    red = np.random.randint(low=-100, high=100)   
+    shifted = image.copy()
+    shift = np.array([[blue,green,red]])
+    shifted = shifted + shift
+    shifted[shifted < 0] = 0
+    shifted[shifted > 255] = 255
+    return shifted
+
+def CLAHE(image):    
+    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    labPlanes = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=2.0,tileGridSize=(8,8))
+    labPlanes[0] = clahe.apply(labPlanes[0])
+    lab = cv2.merge(labPlanes)
+    claheImage = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)    
+    return claheImage
+
+def randomContrast(image):
+    alpha = np.random.randint(low=100, high=300)
+    alpha = alpha/100
+    contrasted = cv2.convertScaleAbs(image, alpha=alpha)
+    return contrasted
+
+def randomBrightness(image):
+    beta = np.random.randint(low=0, high=100)
+    brightImage = cv2.convertScaleAbs(image, beta=beta)
+    return brightImage
+
+def randomGamma(image):
+    gamma = np.random.randint(low=0, high=2000)
+    gamma = gamma/100
+    invGamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** invGamma) * 255
+    for i in np.arange(0, 256)]).astype("uint8")
+    gammaImage = cv2.LUT(image, table)
+    return gammaImage
+
+def flipVertical(image):
+    flippedImage = cv2.flip(image, 0)
+    return flippedImage
+
+def flipHorizontal(image):
+    flippedImage = cv2.flip(image, 1)
+    return flippedImage
+
+def flipVerticalHorizontal(image):
+    flippedImage = cv2.flip(image, -1)
+    return flippedImage
+
 def selectOption(option):
-    if option < 0 or option > 24:
+    if option < 0 or option > 34:
         print("Invalid option. Moving on to the next.")
-    elif option == 20:
+    elif option == 31:
         for actualOption in range(6,9):
             selectOption(actualOption)
-    elif option == 21:
+    elif option == 32:
         for actualOption in range(9,16):
             selectOption(actualOption)
-    elif option == 22:
+    elif option == 33:
         for actualOption in range(16,20):
             selectOption(actualOption)
-    elif option == 23:
-        for actualOption in range(0,20):
-            selectOption(actualOption)
+    elif option == 34:
+        for actualOption in range(0,31):
+            selectOption(actualOption)        
     else:
-        pathSave = os.path.join(outputDir,timestamp,attacks[option])
+        pathSave = os.path.join(outputDir,timestamp,str(option)+" - "+attacks[option])
         print("")
         verifDirExist = os.path.isdir(pathSave)
         if verifDirExist == False:
-            os.mkdir(os.path.join(outputDir,timestamp,attacks[option]))
+            os.mkdir(pathSave)
         print(str(option)+" - "+ attacks[option])
         if option == 0:
             angle = input("Please enter the angle of rotation(integer values):")
@@ -267,6 +335,75 @@ def selectOption(option):
                 imageName = os.path.splitext(imageName)[0]
                 blurredImage = blurBilateral(image, diameter)
                 cv2.imwrite(pathSave+"/"+imageName+".png", blurredImage)
+        
+        if option == 20:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                grayed = grayscale(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", grayed)
+                
+        if option == 21:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                shuffled = shuffleChannels(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", shuffled)
+                
+        if option == 22:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                shifted = rgbShift(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", shifted)
+                            
+        if option == 23:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                claheImage = CLAHE(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", claheImage)
+        
+        if option == 24:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                contrasted = randomContrast(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", contrasted)
+                
+        if option == 25:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                brightImage = randomBrightness(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", brightImage)
+                
+        if option == 26:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                gammaImage = randomGamma(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", gammaImage)
+        
+        if option == 27:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                jpgQuality = np.random.randint(low=0, high=50)     
+                cv2.imwrite(pathSave+"/"+imageName+".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), jpgQuality])
+                
+        if option == 28:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                flippedImage = flipVertical(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", flippedImage)
+                
+        if option == 29:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                flippedImage = flipHorizontal(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", flippedImage)
+                
+        if option == 30:
+            for imageName, image in zip(imageNames, imageList):
+                imageName = os.path.splitext(imageName)[0]
+                flippedImage = flipVerticalHorizontal(image)
+                cv2.imwrite(pathSave+"/"+imageName+".png", flippedImage)
+        
+        print("Finished: "+str(option)+" - "+ attacks[option])
+                
 
 attacks = ["Rotation", "Translation", "Scaling", "Cropping", 
            "Histogram equalization", "Sharpening", 
@@ -275,7 +412,11 @@ attacks = ["Rotation", "Translation", "Scaling", "Cropping",
            "Noise - Rayleigh", "Noise - Poisson",
            "Noise - Erlang", "Noise - Exponential",
            "Blur - Average", "Blur- Gaussian", 
-           "Blur - Median", "Blur - Bilateral", 
+           "Blur - Median", "Blur - Bilateral",
+           "Grayscale", "Shuffle channels", "Shift RGB", "CLAHE",
+           "Random contrast", "Random brightness", "Random gamma",
+           "JPEG compression", "Flip vertical", "Flip horizontal",
+           "Flip vertical and horizontal",
            "All edge detection", "All noise", "All blur", "All attacks"]
 
 inputDir = "Input"
