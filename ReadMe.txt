@@ -35,10 +35,21 @@ Attacks to image
 17 - Blur- Gaussian
 18 - Blur - Median
 19 - Blur - Bilateral
-20 - All edge detection
-21 - All noise
-22 - All blur
-23 - All attacks
+20 - Grayscale
+21 - Shuffle channels
+22 - Shift RGB
+23 - CLAHE
+24 - Random contrast
+25 - Random brightness
+26 - Random gamma
+27 - JPEG compression
+28 - Flip vertical
+29 - Flip horizontal
+30 - Flip vertical and horizontal
+31 - All edge detection
+32 - All noise
+33 - All blur
+34 - All attacks
 
 You can select one or various options, for example, if you want just Rotation, Translation and Cropping, just type on terminal:
 
