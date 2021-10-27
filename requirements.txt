@@ -15,7 +15,7 @@ cloudpickle==1.2.2
 coverage==4.5.4
 cryptography==2.8
 cycler==0.10.0
-dask==2.10.1
+dask==2021.10.0
 decorator==4.4.1
 defusedxml==0.6.0
 diff-match-patch==20181111
